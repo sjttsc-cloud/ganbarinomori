@@ -95,16 +95,30 @@ export const useStore = create<AppState>()(
       addStamp: (amount) => set((state) => {
         // スタンプが付与されたら、未獲得フラグをクリアする
         const nextStamps = Math.max(0, state.stamps + amount);
+        
+        // 付与されたスタンプ数分、学習セッション履歴を自動生成してカレンダー履歴へ同期追加！
+        const newSessions: StudySession[] = [];
+        const nowStr = new Date().toISOString();
+        for (let i = 0; i < amount; i++) {
+          newSessions.push({
+            id: `${Date.now()}-${i}-${Math.random().toString(36).substr(2, 5)}`,
+            date: nowStr,
+            durationMinutes: 10, // 標準的な学習時間
+            type: 'study'
+          });
+        }
+
         return { 
           stamps: nextStamps,
-          hasUnclaimedStamp: false // ごほうび獲得に成功したのでフラグ解除
+          hasUnclaimedStamp: false, // ごほうび獲得に成功したのでフラグ解除
+          history: [...state.history, ...newSessions] // 学習のきろくのカレンダーへ完璧に連動！
         };
       }),
       
       addSession: (session) => set((state) => {
-        // お勉強が1回完了すると、学習履歴に追加 ＆ たね+1 ＆ スタンプ未獲得フラグON
+        // お勉強が1回完了すると、たね+1 ＆ スタンプ未獲得フラグON
+        // (実際の学習履歴追加は、保護者がスタンプを押した際にその個数分同期登録するため、ここでは二重登録防止のためhistoryには追加しません)
         return { 
-          history: [...state.history, session],
           seeds: state.seeds + 1, // たねを1つ入手！
           hasUnclaimedStamp: true // スタンプ未獲得状態に設定
         };
