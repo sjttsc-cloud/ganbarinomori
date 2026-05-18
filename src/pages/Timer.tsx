@@ -336,13 +336,17 @@ export const Timer: React.FC = () => {
                 {/* がくしゅうカード */}
                 <div className="bg-pastel-blue bg-opacity-25 p-3.5 rounded-2xl border border-pastel-blue border-opacity-35 flex flex-col items-center justify-center">
                   <span className="text-xs font-black text-blue-500 mb-1">✏️ がくしゅう</span>
-                  <span className="text-primary font-black text-2xl">{studyTimeMinutes}分</span>
+                  <span className="text-primary font-black text-2xl">
+                    {studyTimeMinutes === 0.5 ? '30秒' : `${studyTimeMinutes}分`}
+                  </span>
                 </div>
                 
                 {/* 休憩カード */}
                 <div className="bg-pastel-green bg-opacity-25 p-3.5 rounded-2xl border border-pastel-green border-opacity-35 flex flex-col items-center justify-center">
                   <span className="text-xs font-black text-emerald-500 mb-1">💤 きゅうけい</span>
-                  <span className="text-tertiary font-black text-2xl">{breakTimeMinutes}分</span>
+                  <span className="text-tertiary font-black text-2xl">
+                    {breakTimeMinutes === 0.5 ? '30秒' : `${breakTimeMinutes}分`}
+                  </span>
                 </div>
               </div>
 
@@ -822,62 +826,65 @@ export const Timer: React.FC = () => {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-between pb-8 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center relative z-10 pb-16">
         
-        {/* 上部：応援メッセージの吹き出し（お勉強中のみ表示、休憩中は非表示） */}
-        {!isBreak && currentMessage && (
-          <div 
-            className="w-full max-w-sm flex justify-center mt-2 transform relative z-20"
-            style={{
-              opacity: isBubbleVisible ? 1 : 0,
-              transform: isBubbleVisible ? 'translateY(0) scale(1)' : 'translateY(-12px) scale(0.95)',
-              visibility: isBubbleVisible ? 'visible' : 'hidden',
-              transition: 'opacity 500ms ease, transform 500ms ease, visibility 500ms ease',
-              pointerEvents: isBubbleVisible ? 'auto' : 'none'
-            }}
-          >
-            <div className="bg-white bg-opacity-95 rounded-3xl px-5 py-3 shadow-md border-4 border-pastel-yellow flex items-center gap-3 max-w-[95%] text-text-main animate-bounce">
-              <span className="text-2xl">✨</span>
-              <div className="text-left font-bold">
-                <p className="text-[10px] font-bold text-gray-400 leading-none">{currentMessage.name}</p>
-                <p className="text-sm font-bold leading-tight mt-1">{currentMessage.text}</p>
+        {/* 上部絶対配置レイヤー：お勉強メッセージ または 休憩中ミニゲームUI */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 flex flex-col items-center z-20">
+          {/* お勉強中：応援メッセージの吹き出し */}
+          {!isBreak && currentMessage && (
+            <div 
+              className="w-full flex justify-center transform relative z-20"
+              style={{
+                opacity: isBubbleVisible ? 1 : 0,
+                transform: isBubbleVisible ? 'translateY(0) scale(1)' : 'translateY(-12px) scale(0.95)',
+                visibility: isBubbleVisible ? 'visible' : 'hidden',
+                transition: 'opacity 500ms ease, transform 500ms ease, visibility 500ms ease',
+                pointerEvents: isBubbleVisible ? 'auto' : 'none'
+              }}
+            >
+              <div className="bg-white bg-opacity-95 rounded-3xl px-5 py-3 shadow-md border-4 border-pastel-yellow flex items-center gap-3 max-w-[95%] text-text-main animate-bounce">
+                <span className="text-2xl">✨</span>
+                <div className="text-left font-bold">
+                  <p className="text-[10px] font-bold text-gray-400 leading-none">{currentMessage.name}</p>
+                  <p className="text-sm font-bold leading-tight mt-1">{currentMessage.text}</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* 休憩中用の「もりのたね」ミニゲームUI (羊さんの上部に浮かせる) */}
-        {isBreak && (
-          <div className="w-full max-w-xs bg-indigo-900 bg-opacity-90 rounded-3xl p-4 shadow-xl border-2 border-indigo-600 flex flex-col items-center text-center space-y-3 my-2">
-            <div className="flex justify-between items-center w-full px-2">
-              <span className="text-xs font-bold text-indigo-300">🌱 もりのたねの育成</span>
-              <span className="text-xs font-extrabold text-yellow-300 bg-indigo-950 px-2 py-0.5 rounded-full">
-                たね：{seeds}こ
-              </span>
+          {/* 休憩中：ミニゲームUI (羊さんの上部に浮かせる) */}
+          {isBreak && (
+            <div className="w-full bg-indigo-900 bg-opacity-90 rounded-3xl p-4 shadow-xl border-2 border-indigo-600 flex flex-col items-center text-center space-y-3">
+              <div className="flex justify-between items-center w-full px-2">
+                <span className="text-xs font-bold text-indigo-300">🌱 もりのたねの育成</span>
+                <span className="text-xs font-extrabold text-yellow-300 bg-indigo-950 px-2 py-0.5 rounded-full">
+                  たね：{seeds}こ
+                </span>
+              </div>
+              
+              <p className="text-[10px] font-bold text-indigo-200">
+                たねを植えると、森に木や動物がやってくるよ！
+              </p>
+
+              <button
+                onClick={handlePlantSeed}
+                disabled={seeds <= 0}
+                className={`w-full py-2.5 rounded-2xl font-bold text-sm shadow transition-all border-b-4 flex items-center justify-center gap-1.5
+                  ${seeds > 0
+                    ? 'bg-emerald-500 hover:bg-emerald-400 border-emerald-700 text-white animate-pulse'
+                    : 'bg-indigo-950 border-indigo-900 text-indigo-400 cursor-not-allowed opacity-60'
+                  }
+                `}
+              >
+                <span>🌱</span>
+                <span>たねを まく！</span>
+              </button>
             </div>
-            
-            <p className="text-[10px] font-bold text-indigo-200">
-              たねを植えると、森に木や動物がやってくるよ！
-            </p>
-
-            <button
-              onClick={handlePlantSeed}
-              disabled={seeds <= 0}
-              className={`w-full py-2.5 rounded-2xl font-bold text-sm shadow transition-all border-b-4 flex items-center justify-center gap-1.5
-                ${seeds > 0
-                  ? 'bg-emerald-500 hover:bg-emerald-400 border-emerald-700 text-white animate-pulse'
-                  : 'bg-indigo-950 border-indigo-900 text-indigo-400 cursor-not-allowed opacity-60'
-                }
-              `}
-            >
-              <span>🌱</span>
-              <span>たねを まく！</span>
-            </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* 中央：円形タイマー */}
-        <div className="relative w-64 h-64 flex items-center justify-center my-4">
+        <div className="relative w-64 h-64 flex items-center justify-center my-4 z-10">
           {/* グラスモルフィズム円形背景 */}
           <div className={`absolute w-56 h-56 rounded-full shadow-inner ${
             isBreak ? 'bg-indigo-950 bg-opacity-40 border border-indigo-900' : 'bg-white bg-opacity-80'
@@ -930,17 +937,19 @@ export const Timer: React.FC = () => {
           </div>
         </div>
 
-        {/* 下部：進捗ゲージ（もりのにぎやかさ） */}
+        {/* 下部絶対配置レイヤー：進捗ゲージ（お勉強中のみ表示） */}
         {!isBreak && (
-          <div className="w-full max-w-sm bg-white bg-opacity-90 rounded-3xl p-3.5 shadow-md border-2 border-pastel-pink flex flex-col items-center space-y-2 mt-4">
-            <div className="w-full bg-gray-100 rounded-full h-3.5 overflow-hidden border border-gray-200">
-              <div 
-                className="bg-pastel-green h-full rounded-full transition-all duration-1000 ease-out"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-            <div className="text-xs font-bold text-gray-500">
-              {themeNames[theme]}：{progressPercent}% 完了
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-sm px-6 z-20">
+            <div className="bg-white bg-opacity-90 rounded-3xl p-3.5 shadow-md border-2 border-pastel-pink flex flex-col items-center space-y-2">
+              <div className="w-full bg-gray-100 rounded-full h-3.5 overflow-hidden border border-gray-200">
+                <div 
+                  className="bg-pastel-green h-full rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <div className="text-xs font-bold text-gray-500">
+                {themeNames[theme]}：{progressPercent}% 完了
+              </div>
             </div>
           </div>
         )}

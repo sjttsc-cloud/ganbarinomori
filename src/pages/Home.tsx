@@ -9,6 +9,7 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { settings, updateSettings, hasUnclaimedStamp, discoveredObjects } = useStore();
   const pomodoroOptions = [
+    { study: 0.5, break: 0.5 },
     { study: 5, break: 1 },
     { study: 10, break: 2 },
     { study: 15, break: 3 },
@@ -18,7 +19,7 @@ export const Home: React.FC = () => {
     { study: 60, break: 15 },
   ];
 
-  const [selectedOption, setSelectedOption] = useState(pomodoroOptions[1]); // デフォルト10分セット
+  const [selectedOption, setSelectedOption] = useState(pomodoroOptions[2]); // デフォルト10分セット
 
   const handleStart = () => {
     navigate('/timer', { state: { studyTime: selectedOption.study, breakTime: selectedOption.break } });
@@ -100,14 +101,16 @@ export const Home: React.FC = () => {
                           : 'bg-white text-gray-500 border-gray-100 hover:bg-gray-50'}
                       `}
                     >
-                      <span className="text-xl font-bold">{opt.study}分</span>
+                      <span className="text-xl font-bold">
+                        {opt.study === 0.5 ? '30秒' : `${opt.study}分`}
+                      </span>
                       <span className={`
                         text-[10px] font-black px-2 py-0.5 rounded-full mt-1.5 transition-all
                         ${isSelected
                           ? 'bg-white text-secondary' 
                           : 'bg-gray-100 text-gray-400'}
                       `}>
-                        やすみ {opt.break}分
+                        やすみ {opt.break === 0.5 ? '30秒' : `${opt.break}分`}
                       </span>
                     </button>
                   );
