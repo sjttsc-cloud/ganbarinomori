@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Button } from '../components/ui/Button';
 import { Ruby } from '../components/ui/Ruby';
-import { ChevronLeft, Award, Sparkles, BookOpen } from 'lucide-react';
+import { ChevronLeft, Sparkles } from 'lucide-react';
 
 // 全17種類の図鑑候補
 const GALLERY_ITEMS = [

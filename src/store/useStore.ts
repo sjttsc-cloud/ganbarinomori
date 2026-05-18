@@ -118,7 +118,7 @@ export const useStore = create<AppState>()(
       
       // たねの消費＆森オブジェクト生成
       useSeed: () => {
-        const { seeds, forestObjects, discoveredObjects } = get();
+        const { seeds, discoveredObjects } = get();
         if (seeds <= 0) {
           return { success: false };
         }
