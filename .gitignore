@@ -23,8 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Large BGM Files
-public/music.mp3
-public/休憩中.mp3
-public/brownNoise.mp3
-

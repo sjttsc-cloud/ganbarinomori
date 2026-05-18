@@ -9,11 +9,11 @@ export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false }) => {
   const { settings } = useStore();
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // public フォルダに追加されたオリジナルのmp3ファイルを指定します
+  // public フォルダに追加された新しい音源ファイルを指定します（100MB未満でGit・Web対応）
   const audioUrls = {
-    music: '/music.mp3',
-    brownNoise: '/brownNoise.mp3',
-    break: '/休憩中.mp3',
+    music: '/BGM.wav',
+    brownNoise: '/ブラウンノイズ.wav',
+    break: '/たこさんウインナー .wav',
   };
 
   // 休憩中でおべんきょうミュート設定（none）でない場合は自動的に「休憩中.mp3」に変更
