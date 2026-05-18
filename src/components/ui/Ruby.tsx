@@ -8,9 +8,17 @@ interface RubyProps {
 
 export const Ruby: React.FC<RubyProps> = ({ kanji, furigana, className = '' }) => {
   return (
-    <ruby className={`inline-block text-center align-middle mx-0.5 ${className}`}>
+    <ruby className={`inline-block text-center align-middle mx-0.5 ${className}`} style={{ rubyPosition: 'over' }}>
       {kanji}
-      <rt className="text-[9px] font-black text-gray-400 select-none tracking-tight pb-0.5">
+      <rt 
+        className="font-black text-amber-800 select-none tracking-tight pb-0.5 text-center" 
+        style={{ 
+          display: 'ruby-text', 
+          fontSize: '0.6em', 
+          lineHeight: '1', 
+          rubyPosition: 'over' 
+        }}
+      >
         {furigana}
       </rt>
     </ruby>
