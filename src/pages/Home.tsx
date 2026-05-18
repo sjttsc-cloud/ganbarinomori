@@ -115,7 +115,15 @@ export const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* もりのなかま図鑑しんちょくボタン */}
+            {/* 始めるボタン (上に配置) */}
+            <div className="pt-2 w-full max-w-sm">
+              <Button onClick={handleStart} className="w-full text-2xl gap-2 h-20 shadow-xl border-b-8 border-orange-600 rounded-3xl" variant="primary">
+                <Play fill="currentColor" size={32} />
+                <Ruby kanji="始" furigana="はじ" />める
+              </Button>
+            </div>
+
+            {/* もりのなかま図鑑しんちょくボタン (下に配置) */}
             <div className="w-full max-w-sm pt-2">
               <button
                 onClick={() => navigate('/forest-gallery')}
@@ -137,13 +145,6 @@ export const Home: React.FC = () => {
                   <span>{discoveredObjects?.length || 0} / 17</span>
                 </div>
               </button>
-            </div>
-
-            <div className="pt-2 w-full max-w-sm">
-              <Button onClick={handleStart} className="w-full text-2xl gap-2 h-20 shadow-xl border-b-8 border-orange-600 rounded-3xl" variant="primary">
-                <Play fill="currentColor" size={32} />
-                <Ruby kanji="始" furigana="はじ" />める
-              </Button>
             </div>
 
             <div className="flex gap-4 justify-center items-center mt-4">
