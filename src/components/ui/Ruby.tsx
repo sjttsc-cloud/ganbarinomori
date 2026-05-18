@@ -8,20 +8,27 @@ interface RubyProps {
 
 export const Ruby: React.FC<RubyProps> = ({ kanji, furigana, className = '' }) => {
   return (
-    <ruby className={`inline-block text-center align-middle mx-0.5 ${className}`} style={{ rubyPosition: 'over' }}>
-      {kanji}
-      <rt 
-        className="font-black text-amber-800 select-none tracking-tight pb-0.5 text-center" 
+    <span 
+      className={`inline-block relative text-center mx-0.5 ${className}`} 
+      style={{ verticalAlign: 'baseline' }}
+    >
+      {/* 漢字部分 (ベースラインに完全に固定され、沈み込みを100%防ぐ) */}
+      <span className="leading-none">{kanji}</span>
+      
+      {/* 振り仮名 (ルビ) 部分 (漢字の上に絶対配置され、高さを持たないため段落を崩さない) */}
+      <span 
+        className="absolute bottom-full left-1/2 font-black text-amber-800 select-none tracking-tight text-center" 
         style={{ 
-          display: 'ruby-text', 
-          fontSize: '0.6em', 
-          lineHeight: '1', 
-          rubyPosition: 'over' 
+          transform: 'translate(-50%, -2px)', 
+          fontSize: '9px', 
+          lineHeight: '1',
+          width: 'max-content',
+          pointerEvents: 'none'
         }}
       >
         {furigana}
-      </rt>
-    </ruby>
+      </span>
+    </span>
   );
 };
 
