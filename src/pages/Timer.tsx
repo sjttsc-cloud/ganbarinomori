@@ -378,7 +378,7 @@ export const Timer: React.FC = () => {
               {/* カウント数字・絵文字・ストーリーのポップアップ演出 */}
               <div key={countdown} className="relative select-none animate-pop-countdown flex flex-col items-center justify-center text-center w-full">
                 {countdown === 3 && (
-                  <div className="flex flex-col items-center animate-bounce">
+                  <div className="flex flex-col items-center">
                     <span className="text-[120px] font-black text-blue-600 drop-shadow-[0_6px_12px_rgba(30,58,138,0.4)] leading-none font-sans">3</span>
                     <div className="flex items-center gap-1.5 bg-blue-100 border-2 border-blue-300 px-4 py-1.5 rounded-full mt-2 shadow-sm">
                       <span className="text-xl animate-spin">🌱</span>
@@ -389,7 +389,7 @@ export const Timer: React.FC = () => {
                   </div>
                 )}
                 {countdown === 2 && (
-                  <div className="flex flex-col items-center animate-bounce">
+                  <div className="flex flex-col items-center">
                     <span className="text-[120px] font-black text-emerald-500 drop-shadow-[0_6px_12px_rgba(16,185,129,0.4)] leading-none font-sans">2</span>
                     <div className="flex items-center gap-1.5 bg-emerald-100 border-2 border-emerald-300 px-4 py-1.5 rounded-full mt-2 shadow-sm">
                       <span className="text-xl animate-pulse">🌿</span>
@@ -400,10 +400,10 @@ export const Timer: React.FC = () => {
                   </div>
                 )}
                 {countdown === 1 && (
-                  <div className="flex flex-col items-center animate-bounce">
+                  <div className="flex flex-col items-center">
                     <span className="text-[120px] font-black text-amber-500 drop-shadow-[0_6px_12px_rgba(245,158,11,0.4)] leading-none font-sans">1</span>
                     <div className="flex items-center gap-1.5 bg-amber-100 border-2 border-amber-300 px-4 py-1.5 rounded-full mt-2 shadow-sm">
-                      <span className="text-xl animate-bounce">🌸</span>
+                      <span className="text-xl animate-pulse">🌸</span>
                       <span className="text-xs font-black text-amber-900">
                         おはなが さいた！
                       </span>
@@ -412,10 +412,10 @@ export const Timer: React.FC = () => {
                 )}
                 {countdown === 0 && (
                   <div className="flex flex-col items-center text-center w-full px-2">
-                    <span className="text-5xl font-black bg-gradient-to-r from-orange-500 via-red-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_3px_6px_rgba(239,68,68,0.3)] animate-bounce leading-none py-1 font-sans">
+                    <span className="text-5xl font-black bg-gradient-to-r from-orange-500 via-red-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_3px_6px_rgba(239,68,68,0.3)] leading-none py-1 font-sans">
                       よーい どん！
                     </span>
-                    <span className="text-6xl mt-2 select-none animate-bounce delay-150 transform hover:scale-110 transition-transform duration-200">🚀✨🎒</span>
+                    <span className="text-6xl mt-2 select-none transform hover:scale-110 transition-transform duration-200">🚀✨🎒</span>
                     <span className="text-xs font-black text-white bg-gradient-to-r from-primary to-secondary border-2 border-white px-4 py-1.5 rounded-full shadow-md mt-4 animate-pulse">
                       お勉強スタート！がんばるぞ！✊
                     </span>
