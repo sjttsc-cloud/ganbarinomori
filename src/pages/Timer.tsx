@@ -299,8 +299,20 @@ export const Timer: React.FC = () => {
 
   // 1. カウントダウン/準備画面
   if (showConfirm) {
+    // カウントダウン中のおしゃれな背景グラデーション切り替え
+    const getCountdownBgClass = () => {
+      if (countdown === null) return 'bg-pastel-blue bg-opacity-20';
+      switch (countdown) {
+        case 3: return 'bg-gradient-to-b from-blue-900 via-indigo-950 to-slate-950 text-white transition-all duration-700';
+        case 2: return 'bg-gradient-to-b from-emerald-950 via-teal-900 to-slate-950 text-white transition-all duration-700';
+        case 1: return 'bg-gradient-to-b from-amber-950 via-orange-950 to-slate-950 text-white transition-all duration-700';
+        case 0: return 'bg-gradient-to-b from-rose-900 via-purple-900 to-indigo-950 text-white transition-all duration-700';
+        default: return 'bg-pastel-blue bg-opacity-20';
+      }
+    };
+
     return (
-      <div className="p-6 min-h-screen flex flex-col items-center justify-center space-y-8 bg-pastel-blue bg-opacity-20">
+      <div className={`p-6 min-h-screen flex flex-col items-center justify-center space-y-8 ${getCountdownBgClass()}`}>
         {countdown === null ? (
           <>
             <h2 className="text-3xl font-bold text-center text-primary bg-white px-8 py-3 rounded-full shadow-sm">
@@ -330,27 +342,27 @@ export const Timer: React.FC = () => {
             </div>
           </>
         ) : (
-          // === 視認性100%確保 ＆ 超ド派手！わくわくカウントダウン演出 ===
-          <div className="relative w-full max-w-sm h-80 flex flex-col items-center justify-center overflow-hidden">
+          // === 超お洒落でわくわくする「魔法のたね急成長」カウントダウン演出 ===
+          <div className="relative w-full max-w-sm h-[26rem] flex flex-col items-center justify-center overflow-hidden">
             
-            {/* 1. 最背面：背後でぐるぐる回転しながら脈打つ集中オーラ（z-0に完全に分離） */}
-            <div className="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-primary via-secondary to-tertiary blur-3xl opacity-25 animate-aura-pulse pointer-events-none z-0" />
+            {/* 1. 最背面：ぐるぐる回転しながら鼓動する神秘のオーラリング */}
+            <div className="absolute w-80 h-80 rounded-full bg-gradient-to-tr from-pastel-pink via-pastel-yellow to-pastel-blue blur-3xl opacity-30 animate-aura-pulse pointer-events-none z-0" />
             
-            {/* 2. 中層：紙吹雪シャワー（文字の邪魔にならないように最背面に配置、かつ不透明度を調整） */}
+            {/* 2. 中層：よーいドン！の瞬間に画面いっぱいに弾けるたくさんの魔法の紙吹雪 */}
             {countdown === 0 && (
               <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-                {Array.from({ length: 20 }).map((_, i) => {
-                  const colors = ['bg-red-400', 'bg-blue-400', 'bg-yellow-400', 'bg-green-400', 'bg-pink-400', 'bg-purple-400'];
+                {Array.from({ length: 45 }).map((_, i) => {
+                  const colors = ['bg-red-400', 'bg-blue-400', 'bg-yellow-300', 'bg-green-400', 'bg-pink-400', 'bg-purple-400', 'bg-orange-400'];
                   const randomColor = colors[Math.floor(Math.random() * colors.length)];
                   return (
                     <div
                       key={i}
-                      className={`absolute w-3 h-3 rounded-full ${randomColor} animate-confetti`}
+                      className={`absolute w-3.5 h-3.5 rounded-full ${randomColor} animate-confetti`}
                       style={{
                         left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 15}%`,
-                        animationDelay: `${Math.random() * 0.5}s`,
-                        animationDuration: `${2.0 + Math.random() * 1.5}s`
+                        top: `${Math.random() * 20}%`,
+                        animationDelay: `${Math.random() * 0.4}s`,
+                        animationDuration: `${1.5 + Math.random() * 1.5}s`
                       }}
                     />
                   );
@@ -358,46 +370,51 @@ export const Timer: React.FC = () => {
               </div>
             )}
 
-            {/* 3. 前面：視認性を完璧に守る「丸型発光座布団（バックドロップシールド）」＆ 境界線 ＆ シャドウ */}
-            <div className="w-64 h-64 rounded-full bg-white bg-opacity-85 backdrop-blur-md border-4 border-pastel-pink shadow-2xl flex items-center justify-center relative z-10 p-4">
+            {/* 3. 前面：おとぎ話の絵本に出てくるような「お花の魔法のリースフレーム」 */}
+            <div className="w-72 h-72 rounded-full bg-white bg-opacity-95 backdrop-blur-md border-8 border-dashed border-pastel-yellow shadow-2xl flex items-center justify-center relative z-10 p-6 ring-12 ring-white ring-opacity-40 transform hover:scale-105 transition-all text-text-main">
               
-              {/* カウント数字およびテキスト */}
-              <div key={countdown} className="relative select-none animate-pop-countdown flex flex-col items-center justify-center text-center">
+              {/* カウント数字・絵文字・ストーリーのポップアップ演出 */}
+              <div key={countdown} className="relative select-none animate-pop-countdown flex flex-col items-center justify-center text-center w-full">
                 {countdown === 3 && (
-                  <div className="flex flex-col items-center">
-                    {/* 深いブルーでフチ取りを強化した極太「3」 */}
-                    <span className="text-[110px] font-black text-blue-600 drop-shadow-[0_4px_8px_rgba(30,58,138,0.3)] leading-none">3</span>
-                    <span className="text-sm font-black text-blue-800 bg-blue-100 px-3 py-1 rounded-full mt-2 animate-pulse">
-                      Ready... 🫧
-                    </span>
+                  <div className="flex flex-col items-center animate-bounce">
+                    <span className="text-[120px] font-black text-blue-600 drop-shadow-[0_6px_12px_rgba(30,58,138,0.4)] leading-none font-sans">3</span>
+                    <div className="flex items-center gap-1.5 bg-blue-100 border-2 border-blue-300 px-4 py-1.5 rounded-full mt-2 shadow-sm">
+                      <span className="text-xl animate-spin">🌱</span>
+                      <span className="text-xs font-black text-blue-900">
+                        たねを まくよ！
+                      </span>
+                    </div>
                   </div>
                 )}
                 {countdown === 2 && (
-                  <div className="flex flex-col items-center">
-                    {/* 深いグリーンでフチ取りを強化した極太「2」 */}
-                    <span className="text-[110px] font-black text-emerald-600 drop-shadow-[0_4px_8px_rgba(6,78,59,0.3)] leading-none">2</span>
-                    <span className="text-sm font-black text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full mt-2 animate-pulse">
-                      Set... 🍃
-                    </span>
+                  <div className="flex flex-col items-center animate-bounce">
+                    <span className="text-[120px] font-black text-emerald-500 drop-shadow-[0_6px_12px_rgba(16,185,129,0.4)] leading-none font-sans">2</span>
+                    <div className="flex items-center gap-1.5 bg-emerald-100 border-2 border-emerald-300 px-4 py-1.5 rounded-full mt-2 shadow-sm">
+                      <span className="text-xl animate-pulse">🌿</span>
+                      <span className="text-xs font-black text-emerald-900">
+                        めが でてきた！
+                      </span>
+                    </div>
                   </div>
                 )}
                 {countdown === 1 && (
-                  <div className="flex flex-col items-center">
-                    {/* 深いイエローでフチ取りを強化した極太「1」 */}
-                    <span className="text-[110px] font-black text-amber-500 drop-shadow-[0_4px_8px_rgba(146,64,14,0.3)] leading-none">1</span>
-                    <span className="text-sm font-black text-amber-800 bg-amber-100 px-3 py-1 rounded-full mt-2 animate-pulse">
-                      Go!!! ✨
-                    </span>
+                  <div className="flex flex-col items-center animate-bounce">
+                    <span className="text-[120px] font-black text-amber-500 drop-shadow-[0_6px_12px_rgba(245,158,11,0.4)] leading-none font-sans">1</span>
+                    <div className="flex items-center gap-1.5 bg-amber-100 border-2 border-amber-300 px-4 py-1.5 rounded-full mt-2 shadow-sm">
+                      <span className="text-xl animate-bounce">🌸</span>
+                      <span className="text-xs font-black text-amber-900">
+                        おはなが さいた！
+                      </span>
+                    </div>
                   </div>
                 )}
                 {countdown === 0 && (
                   <div className="flex flex-col items-center text-center w-full px-2">
-                    {/* よーい どん！グラデーションテキスト */}
-                    <span className="text-4xl md:text-5xl font-black bg-gradient-to-r from-orange-600 via-red-600 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(220,38,38,0.2)] animate-bounce leading-none py-1">
+                    <span className="text-5xl font-black bg-gradient-to-r from-orange-500 via-red-500 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_3px_6px_rgba(239,68,68,0.3)] animate-bounce leading-none py-1 font-sans">
                       よーい どん！
                     </span>
-                    <span className="text-5xl mt-1 select-none animate-bounce delay-150">🚀🔥</span>
-                    <span className="text-[10px] font-black text-gray-500 bg-gray-50 border border-gray-150 px-2.5 py-1 rounded-full shadow-sm mt-3 animate-pulse">
+                    <span className="text-6xl mt-2 select-none animate-bounce delay-150 transform hover:scale-110 transition-transform duration-200">🚀✨🎒</span>
+                    <span className="text-xs font-black text-white bg-gradient-to-r from-primary to-secondary border-2 border-white px-4 py-1.5 rounded-full shadow-md mt-4 animate-pulse">
                       お勉強スタート！がんばるぞ！✊
                     </span>
                   </div>
