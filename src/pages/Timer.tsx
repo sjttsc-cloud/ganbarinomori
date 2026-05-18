@@ -29,6 +29,10 @@ export const Timer: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(true);
   const [countdown, setCountdown] = useState<number | null>(null);
 
+  // 応援メッセージ（セリフ枠）の自動フェードイン・アウト用のステート
+  const [lastMessageText, setLastMessageText] = useState('');
+  const [isBubbleVisible, setIsBubbleVisible] = useState(false);
+
   // 育成アクション時のメッセージ
   const [growthMessage, setGrowthMessage] = useState<string | null>(null);
   const [tapEffect, setTapEffect] = useState<{ id: string; emoji: string } | null>(null);
@@ -251,6 +255,21 @@ export const Timer: React.FC = () => {
   };
 
   const currentMessage = getThemeMessage();
+
+  // 応援メッセージ（吹き出し）の更新をリアルタイム検知して5秒間だけ浮かび上がらせる
+  useEffect(() => {
+    if (currentMessage && currentMessage.text !== lastMessageText) {
+      setLastMessageText(currentMessage.text);
+      setIsBubbleVisible(true); // 吹き出しを表示！
+ 
+      // 5秒後にフェードアウト
+      const timerId = setTimeout(() => {
+        setIsBubbleVisible(false);
+      }, 5000);
+ 
+      return () => clearTimeout(timerId); // クリーンアップ
+    }
+  }, [currentMessage?.text, lastMessageText]);
 
   // 1. カウントダウン/準備画面
   if (showConfirm) {
@@ -772,9 +791,16 @@ export const Timer: React.FC = () => {
       <main className="flex-1 flex flex-col items-center justify-between pb-8 relative z-10">
         
         {/* 上部：応援メッセージの吹き出し（お勉強中のみ表示、休憩中は非表示） */}
-        {!isBreak && (
-          <div className="w-full max-w-sm flex justify-center mt-2 animate-bounce">
-            <div className="bg-white bg-opacity-95 rounded-3xl px-5 py-3 shadow-md border-4 border-pastel-yellow flex items-center gap-3 max-w-[95%] text-text-main">
+        {!isBreak && currentMessage && (
+          <div 
+            className={`w-full max-w-sm flex justify-center mt-2 transition-all duration-500 transform relative z-20
+              ${isBubbleVisible 
+                ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
+                : 'opacity-0 -translate-y-3 scale-95 pointer-events-none'
+              }
+            `}
+          >
+            <div className="bg-white bg-opacity-95 rounded-3xl px-5 py-3 shadow-md border-4 border-pastel-yellow flex items-center gap-3 max-w-[95%] text-text-main animate-bounce">
               <span className="text-2xl">✨</span>
               <div className="text-left font-bold">
                 <p className="text-[10px] font-bold text-gray-400 leading-none">{currentMessage.name}</p>
