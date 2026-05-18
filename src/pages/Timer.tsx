@@ -258,6 +258,12 @@ export const Timer: React.FC = () => {
 
   // 応援メッセージ（吹き出し）の更新をリアルタイム検知して5秒間だけ浮かび上がらせる
   useEffect(() => {
+    // 準備画面（showConfirm）の時は、まだお勉強本画面が表示されていないため、タイマーを動かさず非表示にして待機する！
+    if (showConfirm) {
+      setIsBubbleVisible(false);
+      return;
+    }
+
     if (currentMessage && currentMessage.text !== lastMessageText) {
       setLastMessageText(currentMessage.text);
       setIsBubbleVisible(true); // 吹き出しを表示！
@@ -269,7 +275,7 @@ export const Timer: React.FC = () => {
  
       return () => clearTimeout(timerId); // クリーンアップ
     }
-  }, [currentMessage?.text, lastMessageText]);
+  }, [currentMessage?.text, lastMessageText, showConfirm]);
 
   // 1. カウントダウン/準備画面
   if (showConfirm) {
