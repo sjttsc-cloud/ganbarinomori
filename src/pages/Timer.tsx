@@ -930,6 +930,9 @@ export const Timer: React.FC = () => {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
+            <div className="text-xs font-bold text-gray-500">
+              {themeNames[theme]}：{progressPercent}% 完了
+            </div>
           </div>
         )}
         
