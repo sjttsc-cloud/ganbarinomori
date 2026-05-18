@@ -256,9 +256,9 @@ export const Timer: React.FC = () => {
 
   const currentMessage = getThemeMessage();
 
-  // 応援メッセージ（吹き出し）の更新をリアルタイム検知して5秒間だけ浮かび上がらせる
+  // 【堅牢ステップ1】 応援メッセージ（吹き出し）の更新を検知して、表示フラグをONにする
   useEffect(() => {
-    // 準備画面（showConfirm）の時は、まだお勉強本画面が表示されていないため、タイマーを動かさず非表示にして待機する！
+    // 準備画面（showConfirm）の時は、まだお勉強本画面が表示されていないため非表示で待機する
     if (showConfirm) {
       setIsBubbleVisible(false);
       return;
@@ -267,15 +267,19 @@ export const Timer: React.FC = () => {
     if (currentMessage && currentMessage.text !== lastMessageText) {
       setLastMessageText(currentMessage.text);
       setIsBubbleVisible(true); // 吹き出しを表示！
- 
-      // 5秒後にフェードアウト
-      const timerId = setTimeout(() => {
-        setIsBubbleVisible(false);
-      }, 5000);
- 
-      return () => clearTimeout(timerId); // クリーンアップ
     }
   }, [currentMessage?.text, lastMessageText, showConfirm]);
+
+  // 【堅牢ステップ2】 表示フラグがONになったら、確実に5秒後にフェードアウト（非表示）にする
+  useEffect(() => {
+    if (isBubbleVisible) {
+      const timerId = setTimeout(() => {
+        setIsBubbleVisible(false);
+      }, 5000); // 5秒間表示
+
+      return () => clearTimeout(timerId); // クリーンアップ
+    }
+  }, [isBubbleVisible]);
 
   // 1. カウントダウン/準備画面
   if (showConfirm) {
@@ -799,12 +803,14 @@ export const Timer: React.FC = () => {
         {/* 上部：応援メッセージの吹き出し（お勉強中のみ表示、休憩中は非表示） */}
         {!isBreak && currentMessage && (
           <div 
-            className={`w-full max-w-sm flex justify-center mt-2 transition-all duration-500 transform relative z-20
-              ${isBubbleVisible 
-                ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
-                : 'opacity-0 -translate-y-3 scale-95 pointer-events-none'
-              }
-            `}
+            className="w-full max-w-sm flex justify-center mt-2 transform relative z-20"
+            style={{
+              opacity: isBubbleVisible ? 1 : 0,
+              transform: isBubbleVisible ? 'translateY(0) scale(1)' : 'translateY(-12px) scale(0.95)',
+              visibility: isBubbleVisible ? 'visible' : 'hidden',
+              transition: 'opacity 500ms ease, transform 500ms ease, visibility 500ms ease',
+              pointerEvents: isBubbleVisible ? 'auto' : 'none'
+            }}
           >
             <div className="bg-white bg-opacity-95 rounded-3xl px-5 py-3 shadow-md border-4 border-pastel-yellow flex items-center gap-3 max-w-[95%] text-text-main animate-bounce">
               <span className="text-2xl">✨</span>
