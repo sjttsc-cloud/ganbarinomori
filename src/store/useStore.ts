@@ -47,6 +47,7 @@ interface AppState {
   resetForest: () => void;
   setHasUnclaimedStamp: (val: boolean) => void;
   resetStamps: () => void; // スタンプ全クリア用
+  cancelUnclaimedStamp: () => void; // 今回のスタンプ無効化用
   addDiscoveredObject: (name: string) => void; // 新たに図鑑に登録する
 }
 
@@ -175,6 +176,12 @@ export const useStore = create<AppState>()(
  
       // スタンプの完全リセット（スタンプ数、未獲得フラグ、森、たねは消すが、子供のコレクションの実績である図鑑データは安全に保持する）
       resetStamps: () => set({ stamps: 0, hasUnclaimedStamp: false, forestObjects: [], seeds: 0 }),
+
+      // 今回のスタンプ無効化（たねも1個減らす）
+      cancelUnclaimedStamp: () => set((state) => ({ 
+        hasUnclaimedStamp: false, 
+        seeds: Math.max(0, state.seeds - 1) 
+      })),
 
       // 個別の図鑑登録アクション（後からマージする際などに使用）
       addDiscoveredObject: (name) => set((state) => {

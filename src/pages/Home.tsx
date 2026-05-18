@@ -7,7 +7,7 @@ import { Play, Settings as SettingsIcon, Calendar as CalendarIcon, Award, Volume
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { settings, updateSettings, hasUnclaimedStamp, discoveredObjects } = useStore();
+  const { settings, updateSettings, hasUnclaimedStamp, discoveredObjects, cancelUnclaimedStamp } = useStore();
   const pomodoroOptions = [
     { study: 0.5, break: 0.5 },
     { study: 5, break: 1 },
@@ -20,6 +20,23 @@ export const Home: React.FC = () => {
   ];
 
   const [selectedOption, setSelectedOption] = useState(pomodoroOptions[2]); // デフォルト10分セット
+
+  const handleCancelStamp = () => {
+    const password = settings.password;
+    if (password) {
+      const input = prompt("ほごしゃ用パスワードを 入力してください：");
+      if (input === null) return;
+      if (input !== password) {
+        alert("パスワードが 正しくありません！");
+        return;
+      }
+    }
+    
+    if (window.confirm("今回のスタンプ（と、手に入れた『もりのたね』1こ）を なしに しますか？\n（この操作は もとに もどせません）")) {
+      cancelUnclaimedStamp();
+      alert("スタンプを なしにしました。お勉強を やり直せます！ 🧹✨");
+    }
+  };
 
   const handleStart = () => {
     navigate('/timer', { state: { studyTime: selectedOption.study, breakTime: selectedOption.break } });
@@ -78,6 +95,17 @@ export const Home: React.FC = () => {
             >
               おうちの人とスタンプをもらいにいく！ 🏅
             </Button>
+
+            {/* 保護者向けスタンプ無効化ボタン */}
+            <div className="pt-2 border-t border-gray-100 w-full">
+              <button
+                onClick={handleCancelStamp}
+                className="w-full py-3 rounded-2xl font-bold text-xs bg-red-50 text-red-600 hover:bg-red-100 border-2 border-red-200 transition-all flex items-center justify-center gap-1.5 shadow-sm active:translate-y-0.5"
+              >
+                <span>🔑</span>
+                <span>ほごしゃ用：今回のスタンプを なしにする</span>
+              </button>
+            </div>
           </div>
         ) : (
           // === 通常の学習開始画面 ===
