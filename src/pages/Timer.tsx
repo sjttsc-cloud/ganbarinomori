@@ -295,10 +295,10 @@ export const Timer: React.FC = () => {
       audio.volume = 0.8;
       audio.play().catch((err) => console.log('スタート音の再生に失敗（ブラウザ制限など）:', err));
       
-      // スタートジングルが鳴り終わる頃（3.5秒後）にBGMを再生スタートさせる
+      // スタートジングルが鳴り終わる頃（4.5秒後）にBGMを再生スタートさせる
       const timerId = setTimeout(() => {
         setIsBgmDelayed(false);
-      }, 3500);
+      }, 4500);
       return () => clearTimeout(timerId);
     } else if (phase === 'break') {
       const audio = new Audio('/休憩開始.mp3');
