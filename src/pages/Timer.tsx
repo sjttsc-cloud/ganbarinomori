@@ -37,6 +37,9 @@ export const Timer: React.FC = () => {
   const [growthMessage, setGrowthMessage] = useState<string | null>(null);
   const [tapEffect, setTapEffect] = useState<{ id: string; emoji: string } | null>(null);
 
+  // お勉強開始直後のジングル再生中は、BGMを数秒間待機させるためのフラグ
+  const [isBgmDelayed, setIsBgmDelayed] = useState(false);
+
   // 毎回タイマー開始時にランダムに選ばれるテーマ
   const [theme, setTheme] = useState<TimerTheme>('animals');
 
@@ -287,9 +290,16 @@ export const Timer: React.FC = () => {
     if (showConfirm) return;
 
     if (phase === 'study') {
+      setIsBgmDelayed(true);
       const audio = new Audio('/スタート.mp3');
       audio.volume = 0.8;
       audio.play().catch((err) => console.log('スタート音の再生に失敗（ブラウザ制限など）:', err));
+      
+      // スタートジングルが鳴り終わる頃（3.5秒後）にBGMを再生スタートさせる
+      const timerId = setTimeout(() => {
+        setIsBgmDelayed(false);
+      }, 3500);
+      return () => clearTimeout(timerId);
     } else if (phase === 'break') {
       const audio = new Audio('/休憩開始.mp3');
       audio.volume = 0.8;
@@ -920,14 +930,11 @@ export const Timer: React.FC = () => {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <div className="text-xs font-bold text-gray-500">
-              {themeNames[theme]}：{progressPercent}% 完了
-            </div>
           </div>
         )}
         
         {/* BGMの再生（タイマー本動作中のみ） */}
-        <BGMPlayer isBreak={isBreak} isPlaying={isActive} />
+        <BGMPlayer isBreak={isBreak} isPlaying={isActive && !isBgmDelayed} />
       </main>
     </div>
   );
