@@ -115,7 +115,7 @@ export const useStore = create<AppState>()(
         };
       }),
       
-      addSession: (session) => set((state) => {
+      addSession: (_session) => set((state) => {
         // お勉強が1回完了すると、たね+1 ＆ スタンプ未獲得フラグON
         // (実際の学習履歴追加は、保護者がスタンプを押した際にその個数分同期登録するため、ここでは二重登録防止のためhistoryには追加しません)
         return { 
