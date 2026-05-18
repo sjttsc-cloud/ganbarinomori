@@ -281,6 +281,22 @@ export const Timer: React.FC = () => {
     }
   }, [isBubbleVisible]);
 
+  // === お勉強開始・休憩開始の効果音再生 (スタート.mp3 / 休憩開始.mp3) ===
+  useEffect(() => {
+    // 準備画面（showConfirm: true）の間はまだ再生しない
+    if (showConfirm) return;
+
+    if (phase === 'study') {
+      const audio = new Audio('/スタート.mp3');
+      audio.volume = 0.8;
+      audio.play().catch((err) => console.log('スタート音の再生に失敗（ブラウザ制限など）:', err));
+    } else if (phase === 'break') {
+      const audio = new Audio('/休憩開始.mp3');
+      audio.volume = 0.8;
+      audio.play().catch((err) => console.log('休憩開始音の再生に失敗（ブラウザ制限など）:', err));
+    }
+  }, [phase, showConfirm]);
+
   // 1. カウントダウン/準備画面
   if (showConfirm) {
     return (
