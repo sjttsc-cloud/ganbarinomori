@@ -25,6 +25,21 @@ export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false }) => {
 
   const audioUrl = getAudioUrl();
 
+  // 曲の終わりに一瞬だけ「プチッ」と途切れるのを防ぎ、シームレスに永久ループさせるためのイベント処理
+  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLAudioElement>) => {
+    const audio = e.currentTarget;
+    if (audio.duration && audio.currentTime > 0) {
+      const gapBuffer = 0.15; // 途切れを防ぐバッファ時間（秒）
+      if (audio.duration - audio.currentTime < gapBuffer) {
+        audio.currentTime = 0;
+        audio.play().catch(err => {
+          // 自動再生ポリシーによる一時的ブロックを考慮
+          console.log("シームレスループの再再生待機:", err);
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     if (audioRef.current) {
       if (!audioUrl) {
@@ -53,6 +68,7 @@ export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false }) => {
       ref={audioRef}
       src={audioUrl}
       loop
+      onTimeUpdate={handleTimeUpdate}
       className="hidden" // HTML5 Audioはhiddenでも再生可能
     />
   );
