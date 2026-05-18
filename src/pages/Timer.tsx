@@ -336,17 +336,13 @@ export const Timer: React.FC = () => {
                 {/* がくしゅうカード */}
                 <div className="bg-pastel-blue bg-opacity-25 p-3.5 rounded-2xl border border-pastel-blue border-opacity-35 flex flex-col items-center justify-center">
                   <span className="text-xs font-black text-blue-500 mb-1">✏️ がくしゅう</span>
-                  <span className="text-primary font-black text-2xl">
-                    {studyTimeMinutes === 0.5 ? '30秒' : `${studyTimeMinutes}分`}
-                  </span>
+                  <span className="text-primary font-black text-2xl">{studyTimeMinutes}分</span>
                 </div>
                 
                 {/* 休憩カード */}
                 <div className="bg-pastel-green bg-opacity-25 p-3.5 rounded-2xl border border-pastel-green border-opacity-35 flex flex-col items-center justify-center">
                   <span className="text-xs font-black text-emerald-500 mb-1">💤 きゅうけい</span>
-                  <span className="text-tertiary font-black text-2xl">
-                    {breakTimeMinutes === 0.5 ? '30秒' : `${breakTimeMinutes}分`}
-                  </span>
+                  <span className="text-tertiary font-black text-2xl">{breakTimeMinutes}分</span>
                 </div>
               </div>
 
