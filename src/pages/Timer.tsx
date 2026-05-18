@@ -331,12 +331,21 @@ export const Timer: React.FC = () => {
             
             <div className="bg-white rounded-3xl p-6 shadow-md border-4 border-pastel-pink w-full max-w-xs text-center">
               <p className="text-lg font-bold text-text-main mb-4">今回のポモドーロ</p>
-              <div className="text-primary font-bold text-2xl mb-2">
-                ✏️ べんきょう：{studyTimeMinutes}分
+              
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {/* がくしゅうカード */}
+                <div className="bg-pastel-blue bg-opacity-25 p-3.5 rounded-2xl border border-pastel-blue border-opacity-35 flex flex-col items-center justify-center">
+                  <span className="text-xs font-black text-blue-500 mb-1">✏️ がくしゅう</span>
+                  <span className="text-primary font-black text-2xl">{studyTimeMinutes}分</span>
+                </div>
+                
+                {/* 休憩カード */}
+                <div className="bg-pastel-green bg-opacity-25 p-3.5 rounded-2xl border border-pastel-green border-opacity-35 flex flex-col items-center justify-center">
+                  <span className="text-xs font-black text-emerald-500 mb-1">💤 きゅうけい</span>
+                  <span className="text-tertiary font-black text-2xl">{breakTimeMinutes}分</span>
+                </div>
               </div>
-              <div className="text-tertiary font-bold text-lg bg-pastel-green bg-opacity-35 py-1.5 rounded-2xl mb-3">
-                💤 きゅうけい：{breakTimeMinutes}分
-              </div>
+
               <div className="text-xs font-bold text-gray-400 bg-gray-50 py-1 rounded-xl">
                 えんしゅつ：{themeNames[theme]}
               </div>
