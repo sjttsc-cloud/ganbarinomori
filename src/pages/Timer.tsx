@@ -345,8 +345,10 @@ export const Timer: React.FC = () => {
           // === 超お洒落でわくわくする「魔法のたね急成長」カウントダウン演出 ===
           <div className="relative w-full max-w-sm h-[26rem] flex flex-col items-center justify-center overflow-hidden">
             
-            {/* 1. 最背面：ぐるぐる回転しながら鼓動する神秘のオーラリング */}
-            <div className="absolute w-80 h-80 rounded-full bg-gradient-to-tr from-pastel-pink via-pastel-yellow to-pastel-blue blur-3xl opacity-30 animate-aura-pulse pointer-events-none z-0" />
+            {/* 1. 最背面：ゆっくり優雅に回るすっきりお洒落な魔法の二重サークルライン（靄を完全廃止！） */}
+            <div className="absolute w-80 h-80 rounded-full border-2 border-dashed border-white border-opacity-20 animate-spin pointer-events-none z-0 flex items-center justify-center" style={{ animationDuration: '25s' }}>
+              <div className="w-64 h-64 rounded-full border border-dotted border-white border-opacity-35 animate-spin" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
+            </div>
             
             {/* 2. 中層：よーいドン！の瞬間に画面いっぱいに弾けるたくさんの魔法の紙吹雪 */}
             {countdown === 0 && (
@@ -954,8 +956,8 @@ export const Timer: React.FC = () => {
           </div>
         )}
         
-        {/* BGMの再生（タイマー動作中のみ） */}
-        <BGMPlayer isBreak={isBreak} />
+        {/* BGMの再生（タイマー本動作中のみ） */}
+        <BGMPlayer isBreak={isBreak} isPlaying={isActive} />
       </main>
     </div>
   );

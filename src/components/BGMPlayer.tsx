@@ -3,9 +3,10 @@ import { useStore } from '../store/useStore';
 
 interface BGMPlayerProps {
   isBreak?: boolean;
+  isPlaying?: boolean;
 }
 
-export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false }) => {
+export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false, isPlaying = true }) => {
   const { settings } = useStore();
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -42,9 +43,13 @@ export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false }) => {
 
   useEffect(() => {
     if (audioRef.current) {
-      if (!audioUrl) {
+      if (!audioUrl || !isPlaying) {
         audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        if (!isPlaying) {
+          audioRef.current.pause();
+        } else {
+          audioRef.current.currentTime = 0;
+        }
       } else {
         // 音源を設定して再生
         audioRef.current.volume = 0.3; // 音量を少し下げる
@@ -61,7 +66,7 @@ export const BGMPlayer: React.FC<BGMPlayerProps> = ({ isBreak = false }) => {
         }
       }
     }
-  }, [audioUrl]);
+  }, [audioUrl, isPlaying]);
 
   return (
     <audio
