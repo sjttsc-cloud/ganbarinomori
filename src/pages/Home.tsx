@@ -171,7 +171,7 @@ export const Home: React.FC = () => {
                 </div>
                 <div className="bg-white text-emerald-800 font-black text-xs px-3 py-1.5 rounded-2xl shadow-inner flex flex-col items-center leading-none">
                   <span className="text-[8px] text-gray-400 font-bold mb-0.5">みつけた</span>
-                  <span>{discoveredObjects?.length || 0} / 17</span>
+                  <span>{discoveredObjects?.length || 0} / 55</span>
                 </div>
               </button>
             </div>
