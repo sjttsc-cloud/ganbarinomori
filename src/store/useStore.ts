@@ -44,7 +44,7 @@ interface AppState {
   
   // ミニゲーム「もりのたね」用のアクション
   addSeed: (amount: number) => void;
-  useSeed: () => { success: boolean; object?: ForestObject };
+  useSeed: () => { success: boolean; object?: ForestObject; isNew?: boolean };
   resetForest: () => void;
   setHasUnclaimedStamp: (val: boolean) => void;
   resetStamps: () => void; // スタンプ全クリア用
@@ -216,9 +216,10 @@ export const useStore = create<AppState>()(
         };
 
         // 図鑑への登録判定（まだ発見していなければ追加）
-        const nextDiscovered = discoveredObjects.includes(template.name)
-          ? discoveredObjects
-          : [...discoveredObjects, template.name];
+        const isNew = !discoveredObjects.includes(template.name);
+        const nextDiscovered = isNew
+          ? [...discoveredObjects, template.name]
+          : discoveredObjects;
         
         set((state) => ({
           seeds: state.seeds - 1,
@@ -226,7 +227,7 @@ export const useStore = create<AppState>()(
           discoveredObjects: nextDiscovered
         }));
         
-        return { success: true, object: newObject };
+        return { success: true, object: newObject, isNew };
       },
       
       // 森のリセット（森の描画データとたねは消すが、集めた図鑑実績は消さない親切仕様）

@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Ruby } from '../components/ui/Ruby';
 import { useStore } from '../store/useStore';
 import { BGMPlayer } from '../components/BGMPlayer';
+import { GALLERY_ITEMS } from './ForestGallery';
 
 type TimerPhase = 'study' | 'break';
 type TimerTheme = 'animals' | 'stars' | 'flowers' | 'cleaning' | 'adventure';
@@ -36,6 +37,14 @@ export const Timer: React.FC = () => {
   // 育成アクション時のメッセージ
   const [growthMessage, setGrowthMessage] = useState<string | null>(null);
   const [tapEffect, setTapEffect] = useState<{ id: string; emoji: string } | null>(null);
+
+  // ガチャ演出用ステート
+  const [gachaResult, setGachaResult] = useState<{
+    isOpen: boolean;
+    phase: 'egg' | 'reveal';
+    object: any;
+    isNew: boolean;
+  } | null>(null);
 
   // お勉強開始直後のジングル再生中は、BGMを数秒間待機させるためのフラグ
   const [isBgmDelayed, setIsBgmDelayed] = useState(false);
@@ -136,12 +145,16 @@ export const Timer: React.FC = () => {
   const handlePlantSeed = () => {
     const result = useSeed();
     if (result.success && result.object) {
-      setGrowthMessage(`🌱 たねがそだって 【${result.object.name} ${result.object.emoji}】 があらわれた！ ✨`);
+      // ソーシャルゲーム風ガチャモーダルを起動
+      setGachaResult({
+        isOpen: true,
+        phase: 'egg',
+        object: result.object,
+        isNew: !!result.isNew
+      });
       // エフェクト発動
       setTapEffect({ id: result.object.id, emoji: result.object.emoji });
-      // 3秒後にメッセージをクリア
       setTimeout(() => {
-        setGrowthMessage(null);
         setTapEffect(null);
       }, 3500);
     } else {
@@ -952,6 +965,102 @@ export const Timer: React.FC = () => {
         
         {/* BGMの再生（タイマー本動作中のみ） */}
         <BGMPlayer isBreak={isBreak} isPlaying={isActive && !isBgmDelayed} />
+
+        {/* === ソーシャルゲーム風ガチャ演出モーダル === */}
+        {gachaResult && gachaResult.isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 bg-opacity-80 backdrop-blur-md p-6 select-none animate-fade-in">
+            {/* キラキラ後光エフェクト (phase: 'reveal' の時のみ) */}
+            {gachaResult.phase === 'reveal' && (
+              <div className="absolute w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-amber-400/20 via-transparent to-transparent animate-gacha-spin-slow pointer-events-none z-0" />
+            )}
+
+            {/* 開封前: たね/たまご画面 */}
+            {gachaResult.phase === 'egg' && (
+              <div 
+                onClick={() => setGachaResult(prev => prev ? { ...prev, phase: 'reveal' } : null)}
+                className="flex flex-col items-center justify-center cursor-pointer text-center space-y-6 z-10 animate-scale-up"
+              >
+                {/* 揺れる不思議なたね */}
+                <div className="relative">
+                  {/* 背景の光輪 */}
+                  <div className="absolute inset-0 bg-yellow-300 rounded-full blur-2xl opacity-40 scale-150 animate-pulse" />
+                  <span className="text-9xl block animate-gacha-float filter drop-shadow-[0_0_15px_rgba(253,224,71,0.8)]">
+                    🌱
+                  </span>
+                  <span className="absolute -top-4 -right-4 text-4xl animate-bounce">✨</span>
+                  <span className="absolute -bottom-4 -left-4 text-4xl animate-bounce delay-300">⭐</span>
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-yellow-300 drop-shadow">
+                    ふしぎなたね を まいたよ！
+                  </h3>
+                  <p className="text-white font-bold text-sm tracking-wide animate-pulse">
+                    👇 ここをタップして、さかせてね！ 👇
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* 開封後: 結果カード画面 */}
+            {gachaResult.phase === 'reveal' && (() => {
+              // GALLERY_ITEMS から説明文を検索
+              const foundGalleryItem = GALLERY_ITEMS.find(item => item.name === gachaResult.object?.name);
+              const descText = foundGalleryItem?.desc || '森に新しくやってきたなかまだよ！仲良くしてね！';
+              return (
+                <div className="flex flex-col items-center justify-center space-y-6 z-10 w-full max-w-sm">
+                  {/* 結果カード */}
+                  <div className="relative bg-white rounded-3xl p-6 shadow-2xl border-4 border-yellow-300 w-full text-center animate-gacha-pop-in overflow-hidden flex flex-col items-center">
+                    
+                    {/* NEWバッジ */}
+                    {gachaResult.isNew && (
+                      <div className="absolute -top-1 -left-1 bg-red-500 text-white font-extrabold text-xs px-4 py-1.5 rounded-br-2xl border-r-2 border-b-2 border-white shadow-md animate-pulse z-20 flex items-center gap-1">
+                        <span>✨</span>
+                        <span>NEW</span>
+                      </div>
+                    )}
+
+                    {/* カード上部：カテゴリ */}
+                    <div className="bg-emerald-50 text-emerald-800 text-xs font-black px-4 py-1 rounded-full border border-emerald-200 mb-6 mt-2">
+                      {foundGalleryItem?.category ? foundGalleryItem.category.replace(/^[^\s]+\s+/, '') : 'なかま'}
+                    </div>
+
+                    {/* カード中央：巨大絵文字 */}
+                    <div className="relative my-4 flex items-center justify-center">
+                      {/* 背後のキラキラ */}
+                      <div className="absolute -inset-4 bg-yellow-100 rounded-full opacity-60 blur-md scale-110 pointer-events-none" />
+                      <span className="text-8xl block animate-bounce drop-shadow-md z-10">
+                        {gachaResult.object?.emoji}
+                      </span>
+                    </div>
+
+                    {/* カード下部：名前と説明 */}
+                    <div className="space-y-3 mt-4 w-full">
+                      <h4 className="text-2xl font-black text-emerald-950 tracking-tight leading-tight">
+                        {gachaResult.object?.name}
+                      </h4>
+                      <p className="text-xs font-bold text-gray-500 leading-relaxed px-2 bg-gray-50 py-2.5 rounded-2xl border border-gray-100">
+                        {descText}
+                      </p>
+                    </div>
+
+                    {/* キラキラ飾り */}
+                    <span className="absolute top-4 right-4 text-xl text-yellow-400 animate-pulse">✨</span>
+                    <span className="absolute bottom-4 left-4 text-xl text-yellow-400 animate-pulse delay-500">✨</span>
+                  </div>
+
+                  {/* 閉じるボタン */}
+                  <Button
+                    onClick={() => setGachaResult(null)}
+                    className="w-full bg-emerald-500 hover:bg-emerald-400 border-b-4 border-emerald-700 text-white font-extrabold text-base py-3.5 rounded-2xl shadow-lg active:scale-95 transition-all"
+                  >
+                    森に かざる！ 🌳✨
+                  </Button>
+                </div>
+              );
+            })()}
+          </div>
+        )}
       </main>
     </div>
   );

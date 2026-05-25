@@ -171,3 +171,52 @@
   animation: confettiFall 3.5s linear forwards;
 }
 
+/* === ガチャ演出用のアニメーション === */
+@keyframes gachaPopIn {
+  0% {
+    transform: scale(0) rotate(-10deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1) rotate(5deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes gachaFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes gachaSpinSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-gacha-pop-in {
+  animation: gachaPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.animate-gacha-float {
+  animation: gachaFloat 3s ease-in-out infinite;
+}
+
+.animate-gacha-spin-slow {
+  animation: gachaSpinSlow 15s linear infinite;
+}
+

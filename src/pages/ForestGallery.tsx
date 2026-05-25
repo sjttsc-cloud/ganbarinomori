@@ -6,7 +6,7 @@ import { Ruby } from '../components/ui/Ruby';
 import { ChevronLeft, Sparkles } from 'lucide-react';
 
 // 全55種類の図鑑候補
-const GALLERY_ITEMS = [
+export const GALLERY_ITEMS = [
   // --- き（全13種類） ---
   { category: '🌲 き', name: 'もりの大木', emoji: '🌳', desc: 'もりのまもり神のような大きなきだよ！' },
   { category: '🌲 き', name: 'もみの木', emoji: '🌲', desc: 'ギザギザしたかっこいいきだよ！' },
