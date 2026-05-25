@@ -9,16 +9,17 @@ export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { settings, updateSettings, hasUnclaimedStamp, discoveredObjects, cancelUnclaimedStamp, lastEarnedSeeds } = useStore();
   const pomodoroOptions = [
-    { study: 5, break: 1 },
-    { study: 10, break: 2 },
-    { study: 15, break: 3 },
-    { study: 20, break: 4 },
-    { study: 30, break: 5 },
-    { study: 45, break: 10 },
-    { study: 60, break: 15 },
+    { study: 10 / 60, break: 30 / 60, studyLabel: '10秒', breakLabel: 'やすみ 30秒' },
+    { study: 5, break: 1, studyLabel: '5分', breakLabel: 'やすみ 1分' },
+    { study: 10, break: 2, studyLabel: '10分', breakLabel: 'やすみ 2分' },
+    { study: 15, break: 3, studyLabel: '15分', breakLabel: 'やすみ 3分' },
+    { study: 20, break: 4, studyLabel: '20分', breakLabel: 'やすみ 4分' },
+    { study: 30, break: 5, studyLabel: '30分', breakLabel: 'やすみ 5分' },
+    { study: 45, break: 10, studyLabel: '45分', breakLabel: 'やすみ 10分' },
+    { study: 60, break: 15, studyLabel: '60分', breakLabel: 'やすみ 15分' },
   ];
 
-  const [selectedOption, setSelectedOption] = useState(pomodoroOptions[1]); // デフォルト10分セット
+  const [selectedOption, setSelectedOption] = useState(pomodoroOptions[2]); // デフォルト10分セット (デバッグが追加されたのでインデックス2)
 
   const handleCancelStamp = () => {
     const password = settings.password;
@@ -128,14 +129,14 @@ export const Home: React.FC = () => {
                           : 'bg-white text-gray-500 border-gray-100 hover:bg-gray-50'}
                       `}
                     >
-                      <span className="text-xl font-bold">{opt.study}分</span>
+                      <span className="text-xl font-bold">{opt.studyLabel}</span>
                       <span className={`
                         text-[10px] font-black px-2 py-0.5 rounded-full mt-1.5 transition-all
                         ${isSelected
                           ? 'bg-white text-secondary' 
                           : 'bg-gray-100 text-gray-400'}
                       `}>
-                        やすみ {opt.break}分
+                        {opt.breakLabel}
                       </span>
                     </button>
                   );
