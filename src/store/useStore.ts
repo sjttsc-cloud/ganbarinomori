@@ -32,6 +32,7 @@ interface AppState {
   
   // ミニゲーム「もりのたね」用のステート
   seeds: number;
+  lastEarnedSeeds: number; // 直前のセッションで獲得したたねの数（保護者キャンセル用）
   forestObjects: ForestObject[];
   discoveredObjects: string[]; // これまでに発見したオブジェクトの名前リスト（図鑑用）
   hasUnclaimedStamp: boolean; // 前回の学習後にスタンプが未獲得かどうか
@@ -53,26 +54,68 @@ interface AppState {
 
 // ランダムに森オブジェクトを選択するための候補リスト
 const OBJECT_TEMPLATES = [
+  // --- き（全13種類） ---
   { type: 'tree', name: 'もりの大木', emoji: '🌳' },
   { type: 'tree', name: 'もみの木', emoji: '🌲' },
   { type: 'tree', name: 'ヤシの木', emoji: '🌴' },
   { type: 'tree', name: 'もみじ', emoji: '🍁' },
   { type: 'tree', name: 'さくら', emoji: '🌸' },
+  { type: 'tree', name: 'サボテン', emoji: '🌵' },
+  { type: 'tree', name: 'ひまわり', emoji: '🌻' },
+  { type: 'tree', name: 'チューリップ', emoji: '🌷' },
+  { type: 'tree', name: 'バラ', emoji: '🌹' },
+  { type: 'tree', name: 'りんごの木', emoji: '🍎' },
+  { type: 'tree', name: 'バナナの木', emoji: '🍌' },
+  { type: 'tree', name: 'クローバー', emoji: '🍀' },
+  { type: 'tree', name: 'たけのこ', emoji: '🎍' },
   
+  // --- どうぶつ（全20種類） ---
   { type: 'animal', name: 'キツネさん', emoji: '🦊' },
   { type: 'animal', name: 'ウサギさん', emoji: '🐰' },
   { type: 'animal', name: 'リスさん', emoji: '🐿️' },
   { type: 'animal', name: '小鳥さん', emoji: '🐦' },
   { type: 'animal', name: 'くまさん', emoji: '🐻' },
   { type: 'animal', name: 'フクロウさん', emoji: '🦉' },
+  { type: 'animal', name: 'ネコさん', emoji: '🐱' },
+  { type: 'animal', name: 'イヌさん', emoji: '🐶' },
+  { type: 'animal', name: 'コアラさん', emoji: '🐨' },
+  { type: 'animal', name: 'パンダさん', emoji: '🐼' },
+  { type: 'animal', name: 'ライオンさん', emoji: '🦁' },
+  { type: 'animal', name: 'トラさん', emoji: '🐯' },
+  { type: 'animal', name: 'サルさん', emoji: '🐒' },
+  { type: 'animal', name: 'カエルさん', emoji: '🐸' },
+  { type: 'animal', name: 'シカさん', emoji: '🦌' },
+  { type: 'animal', name: 'ハムスターさん', emoji: '🐹' },
+  { type: 'animal', name: 'ハチさん', emoji: '🐝' },
+  { type: 'animal', name: 'チョウチョさん', emoji: '🦋' },
+  { type: 'animal', name: 'カメさん', emoji: '🐢' },
+  { type: 'animal', name: 'ペンギンさん', emoji: '🐧' },
   
+  // --- おうち（全10種類） ---
   { type: 'house', name: '木の家', emoji: '🏡' },
   { type: 'house', name: 'テント', emoji: '🛖' },
   { type: 'house', name: 'きのこの家', emoji: '🍄' },
+  { type: 'house', name: 'レンガの家', emoji: '🧱' },
+  { type: 'house', name: 'お城', emoji: '🏰' },
+  { type: 'house', name: 'サーカステント', emoji: '🎪' },
+  { type: 'house', name: '郵便ポスト', emoji: '📮' },
+  { type: 'house', name: 'すべり台', emoji: '🛝' },
+  { type: 'house', name: 'メリーゴーランド', emoji: '🎠' },
+  { type: 'house', name: 'キャンピングカー', emoji: '🚐' },
   
+  // --- しぜん（全12種類） ---
   { type: 'river', name: 'ちいさな川', emoji: '🌊' },
   { type: 'river', name: 'もりの噴水', emoji: '⛲' },
   { type: 'river', name: '木の橋', emoji: '🪵' },
+  { type: 'river', name: 'にじ', emoji: '🌈' },
+  { type: 'river', name: 'お星さま', emoji: '🌟' },
+  { type: 'river', name: 'お月さま', emoji: '🌙' },
+  { type: 'river', name: 'たき火', emoji: '🔥' },
+  { type: 'river', name: '雲', emoji: '☁️' },
+  { type: 'river', name: '流れ星', emoji: '💫' },
+  { type: 'river', name: '結晶', emoji: '❄️' },
+  { type: 'river', name: 'たき', emoji: '🏞️' },
+  { type: 'river', name: 'ちいさな火山', emoji: '🌋' },
 ];
 
 export const useStore = create<AppState>()(
@@ -89,6 +132,7 @@ export const useStore = create<AppState>()(
       
       // 初期値
       seeds: 0,
+      lastEarnedSeeds: 0,
       forestObjects: [],
       discoveredObjects: [], // 図鑑データの初期値
       hasUnclaimedStamp: false,
@@ -116,12 +160,29 @@ export const useStore = create<AppState>()(
         };
       }),
       
-      addSession: (_session) => set((state) => {
-        // お勉強が1回完了すると、たね+1 ＆ スタンプ未獲得フラグON
-        // (実際の学習履歴追加は、保護者がスタンプを押した際にその個数分同期登録するため、ここでは二重登録防止のためhistoryには追加しません)
+      addSession: (session) => set((state) => {
+        // お勉強が1回完了すると、時間に応じた量のたねを入手 ＆ スタンプ未獲得フラグON
+        // ５分→1個、10分→1個、15分→2個、20分→2個、30分→3個、45分→3個、60分→5個
+        const minutes = session.durationMinutes;
+        let seedEarned = 1;
+        if (minutes >= 60) {
+          seedEarned = 5;
+        } else if (minutes >= 45) {
+          seedEarned = 3;
+        } else if (minutes >= 30) {
+          seedEarned = 3;
+        } else if (minutes >= 20) {
+          seedEarned = 2;
+        } else if (minutes >= 15) {
+          seedEarned = 2;
+        } else {
+          seedEarned = 1;
+        }
+
         return { 
-          seeds: state.seeds + 1, // たねを1つ入手！
-          hasUnclaimedStamp: true // スタンプ未獲得状態に設定
+          seeds: state.seeds + seedEarned, 
+          lastEarnedSeeds: seedEarned, // 今回獲得したたねの数を記録
+          hasUnclaimedStamp: true 
         };
       }),
       
@@ -175,12 +236,13 @@ export const useStore = create<AppState>()(
       setHasUnclaimedStamp: (val) => set({ hasUnclaimedStamp: val }),
  
       // スタンプの完全リセット（スタンプ数、未獲得フラグ、森、たねは消すが、子供のコレクションの実績である図鑑データは安全に保持する）
-      resetStamps: () => set({ stamps: 0, hasUnclaimedStamp: false, forestObjects: [], seeds: 0 }),
+      resetStamps: () => set({ stamps: 0, hasUnclaimedStamp: false, forestObjects: [], seeds: 0, lastEarnedSeeds: 0 }),
 
-      // 今回のスタンプ無効化（たねも1個減らす）
+      // 今回のスタンプ無効化（獲得したたねも減らす）
       cancelUnclaimedStamp: () => set((state) => ({ 
         hasUnclaimedStamp: false, 
-        seeds: Math.max(0, state.seeds - 1) 
+        seeds: Math.max(0, state.seeds - state.lastEarnedSeeds),
+        lastEarnedSeeds: 0
       })),
 
       // 個別の図鑑登録アクション（後からマージする際などに使用）

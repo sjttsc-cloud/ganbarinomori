@@ -7,7 +7,7 @@ import { Play, Settings as SettingsIcon, Calendar as CalendarIcon, Award, Volume
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { settings, updateSettings, hasUnclaimedStamp, discoveredObjects, cancelUnclaimedStamp } = useStore();
+  const { settings, updateSettings, hasUnclaimedStamp, discoveredObjects, cancelUnclaimedStamp, lastEarnedSeeds } = useStore();
   const pomodoroOptions = [
     { study: 5, break: 1 },
     { study: 10, break: 2 },
@@ -31,7 +31,7 @@ export const Home: React.FC = () => {
       }
     }
     
-    if (window.confirm("今回のスタンプ（と、手に入れた『もりのたね』1こ）を なしに しますか？\n（この操作は もとに もどせません）")) {
+    if (window.confirm(`今回のスタンプ（と、手に入れた『もりのたね』${lastEarnedSeeds}こ）を なしに しますか？\n（この操作は もとに もどせません）`)) {
       cancelUnclaimedStamp();
       alert("スタンプを なしにしました。お勉強を やり直せます！ 🧹✨");
     }
